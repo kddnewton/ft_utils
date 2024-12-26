@@ -9,7 +9,9 @@ static int destructor_called_1 = 0;
 static int destructor_called_2 = 0;
 static int tls_check_1 = 0;
 static int tls_check_2 = 0;
-static weave_local void* tls_1 = (void*) 0xDEADBEEF;
+
+static int FOOBAR = 0xDEADBEEF;
+static weave_local void* tls_1 = (void*) &FOOBAR;
 static weave_local void* tls_2 = NULL;
 
 static PyObject* test_reset(
@@ -22,7 +24,7 @@ static PyObject* test_reset(
   destructor_called_2 = 0;
   tls_check_1 = 0;
   tls_check_2 = 0;
-  tls_1 = (void*) 0xDEADBEEF;
+  tls_1 = (void*) &FOOBAR;
   tls_2 = NULL;
   MUTEX_UNLOCK(destructor_mutex);
   Py_END_ALLOW_THREADS;
