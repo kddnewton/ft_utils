@@ -31,6 +31,7 @@ static PyObject* test_reset(
 
 static void test_destructor_add_1(void* addr) {
   MUTEX_LOCK(destructor_mutex);
+  fprintf(stderr, "[test_destructor_add_1] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
   fprintf(stderr, "[test_destructor_add_1] addr=%p tls_1=%p\n", addr, tls_1);
   if (addr == tls_1) {
     fprintf(stderr, "  addr == tls_1\n");
@@ -65,7 +66,7 @@ static void test_destructor_add_2(void* addr) {
 static PyObject* test_weave_get_destructor_called_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  fprintf(stderr, "[test_weave_get_destructor_called_1]\n");
+  fprintf(stderr, "[test_weave_get_destructor_called_1] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
   int c1;
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
