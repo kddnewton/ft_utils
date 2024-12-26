@@ -176,6 +176,7 @@ void wvls_destructors_invoke(void* arg) {
 }
 
 static void init_wvls_destructor_key() {
+  fprintf(stderr, "[init_wvls_destructor_key]\n");
   int oops = wvls_key_create(&wvls_destructors_key, wvls_destructors_invoke);
   if (oops) {
     fprintf(stderr, "Failed to create TLS key: %i.\n", oops);
@@ -269,14 +270,15 @@ static PyObject* wvlspy_register_destructor(PyObject* self, PyObject* args) {
   }
 
   fprintf(stderr, "[wvlspy_register_destructor] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
-  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)((void**)destruct_ptr));
+  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)*((void**)destruct_ptr));
   register_wvls_destructor(var_ptr, (wvls_destructor_t)destruct_ptr);
-  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)((void**)destruct_ptr));
+  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)*((void**)destruct_ptr));
 
   Py_RETURN_NONE;
 }
 
 static PyObject* wvlspy_unregister_destructor(PyObject* self, PyObject* args) {
+  fprintf(stderr, "[wvlspy_unregister_destructor]\n");
   PyObject* wvls_var = NULL;
 
   /* Parse the arguments */

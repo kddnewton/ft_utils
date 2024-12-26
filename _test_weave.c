@@ -29,6 +29,21 @@ static PyObject* test_reset(
   Py_RETURN_NONE;
 }
 
+static PyObject* test_weave_tls_1(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args)) {
+  fprintf(stderr, "[test_weave_tls_1] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
+  PyObject* ret;
+
+  Py_BEGIN_ALLOW_THREADS;
+  MUTEX_LOCK(destructor_mutex);
+
+  ret = PyLong_FromVoidPtr(tls_1);
+
+  MUTEX_UNLOCK(destructor_mutex);
+  Py_END_ALLOW_THREADS;
+
+  return ret;
+}
+
 static void test_destructor_add_1(void* addr) {
   MUTEX_LOCK(destructor_mutex);
   fprintf(stderr, "[test_destructor_add_1] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
@@ -164,6 +179,7 @@ static PyObject* test_weave_unregister_destructor_2(
 
 static PyMethodDef test_weave_module_methods[] = {
     {"reset", test_reset, METH_VARARGS, "Reset the destructor test values."},
+    {"tls_1", test_weave_tls_1, METH_NOARGS, "Get the value of tls_1"},
     {"register_destructor_1",
      test_weave_register_destructor_1,
      METH_NOARGS,
