@@ -204,9 +204,7 @@ static uint64_t _py_thread_id(void) {
 #ifdef _WIN32
   return 0;
 #else
-  uint64_t tid;
-  pthread_threadid_np(NULL, &tid);
-  return tid;
+  return pthread_self();
 #endif
 }
 
