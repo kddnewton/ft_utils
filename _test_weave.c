@@ -125,6 +125,7 @@ static PyObject* test_weave_get_destructor_called_2(
 static PyObject* test_weave_register_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
+  tls_1 = NULL;
   fprintf(stderr, "[test_weave_register_destructor_1] tls_1=%p &tls_1=%p test_destructor_add_1=%p &test_destructor_add_1=%p\n", tls_1, (void*)&tls_1, test_destructor_add_1, (void*)&test_destructor_add_1);
   int ret = _py_register_wvls_destructor(&tls_1, &test_destructor_add_1);
   if (ret != 0) {
