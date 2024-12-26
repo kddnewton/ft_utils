@@ -113,7 +113,7 @@ static int _py_register_wvls_destructor(
   PyObject* p_args = NULL;
   PyObject* p_result = NULL;
 
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] wvls_var=%p\n", __py_thread_id(), "_py_register_wvls_destructor", wvls_var);
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] wvls_var=%p\n", _py_thread_id(), "_py_register_wvls_destructor", wvls_var);
   _py_check_init_interpreter();
 
   int ret_val = 1;
