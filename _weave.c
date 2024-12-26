@@ -150,7 +150,6 @@ typedef struct wvls_destructor_node {
 static wvls_key_t wvls_destructors_key;
 
 void wvls_destructors_invoke(void* arg) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "wvls_destructors_invoke");
   wvls_destructor_node_t* node = (wvls_destructor_node_t*)arg;
 
   /* Reverse the linked list to ensure destructor calling order matched
@@ -164,13 +163,13 @@ void wvls_destructors_invoke(void* arg) {
   }
   node = previous;
   while (node) {
+    wvls_destructor_node_t* next = node->next;
     if (node->destructor && node->wvls_variable_ptr) {
-      fprintf(stderr, "%-16" PRIu64 " [%-40s] *node->wvls_variable_ptr=%p\n", _py_thread_id(), "wvls_destructors_invoke", *node->wvls_variable_ptr);
+      fprintf(stderr, "%-16" PRIu64 " [%-40s] node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", _py_thread_id(), "wvls_destructors_invoke", node->wvls_variable_ptr, *node->wvls_variable_ptr);
       node->destructor(*(node->wvls_variable_ptr));
     }
-    wvls_destructor_node_t* temp = node;
-    node = node->next;
-    free(temp);
+    free(node);
+    node = next;
   }
 }
 

@@ -79,12 +79,11 @@ static void test_destructor_add_2(void* addr) {
 static PyObject* test_weave_get_destructor_called_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "test_weave_get_destructor_called_1");
   int c1;
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p\n", _py_thread_id(), "test_weave_get_destructor_called_1", tls_1, &tls_1);
   if (tls_check_1) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_check_1 != 0\n", _py_thread_id(), "test_weave_get_destructor_called_1");
     MUTEX_UNLOCK(destructor_mutex);
     Py_BLOCK_THREADS;
     PyErr_SetString(
