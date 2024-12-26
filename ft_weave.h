@@ -99,6 +99,14 @@ static inline PyObject* _py_get_function(
   return pFunc;
 }
 
+static uint64_t _py_thread_id(void) {
+#ifdef _WIN32
+  return 0;
+#else
+  return (uint64_t) pthread_self();
+#endif
+}
+
 /* A function to call from the C ABI which will use the Python interpretor to
    register a destructor. This allow the use of this header only in other
    modules and prevents inter-extension runtime communication other than through
@@ -199,14 +207,6 @@ cleanup:
   Py_XDECREF(p_args);
   Py_XDECREF(p_result);
   return ret_val;
-}
-
-static uint64_t _py_thread_id(void) {
-#ifdef _WIN32
-  return 0;
-#else
-  return (uint64_t) pthread_self();
-#endif
 }
 
 #endif
