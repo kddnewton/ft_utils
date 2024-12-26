@@ -189,7 +189,7 @@ static void init_wvls_destructor_key() {
 void register_wvls_destructor(
     void** wvls_variable_ptr,
     wvls_destructor_t destructor) {
-  fprintf(stderr, "[register_wvls_destructor] wvls_destructors_key=%d\n", wvls_destructors_key);
+  fprintf(stderr, "[register_wvls_destructor] wvls_destructors_key=%lu\n", wvls_destructors_key);
 
   wvls_destructor_node_t* head =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
@@ -262,7 +262,7 @@ static PyObject* wvlspy_register_destructor(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  fprintf(stderr, "[wvlspy_register_destructor] var_ptr=%p, destruct_ptr=%p\n", var_ptr, destruct_ptr);
+  fprintf(stderr, "[wvlspy_register_destructor] var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)((void**)destruct_ptr));
   register_wvls_destructor(var_ptr, (wvls_destructor_t)destruct_ptr);
 
   Py_RETURN_NONE;
