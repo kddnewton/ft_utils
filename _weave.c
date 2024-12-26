@@ -157,7 +157,7 @@ void wvls_destructors_invoke(void* arg) {
      destrutor registration order. */
   wvls_destructor_node_t* previous = NULL;
   while (node) {
-    fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", (void*)node, node->wvls_variable_ptr, (void*)*((void**)node->wvls_variable_ptr));
+    fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p destructor=%p\n", (void*)node, node->wvls_variable_ptr, *node->wvls_variable_ptr, (void*)node->destructor);
     wvls_destructor_node_t* next_node = node->next;
     node->next = previous;
     previous = node;
@@ -166,7 +166,7 @@ void wvls_destructors_invoke(void* arg) {
   node = previous;
   while (node) {
     if (node->destructor && node->wvls_variable_ptr) {
-      fprintf(stderr, "[wvls_destructors_invoke] node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", node->wvls_variable_ptr, (void*)*((void**)node->wvls_variable_ptr));
+      fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p destructor=%p\n", (void*)node, node->wvls_variable_ptr, *node->wvls_variable_ptr, (void*)node->destructor);
       node->destructor(*(node->wvls_variable_ptr));
     }
     wvls_destructor_node_t* temp = node;
