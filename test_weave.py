@@ -30,16 +30,16 @@ class TestTLSManagement(unittest.TestCase):
 
     def test_register_destructor_1(self):
         def thread_func():
-            print(f"before destructor registered, tls={tls_1()}")
+            print(f"before destructor registered, tls={tls_1()}", flush=True)
             register_destructor_1()
-            print(f"after destructor registered, tls={tls_1()}")
+            print(f"after destructor registered, tls={tls_1()}", flush=True)
             pass
 
-        print(f"before anything registered, tls={tls_1()}")
+        print(f"before anything registered, tls={tls_1()}", flush=True)
         t = threading.Thread(target=thread_func)
         t.start()
         t.join()
-        print(f"after thread, tls={tls_1()}")
+        print(f"after thread, tls={tls_1()}", flush=True)
         self.assertEqual(get_destructor_called_1(), 1)
 
     # def test_unregister_destructor_1(self):
