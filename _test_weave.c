@@ -31,12 +31,12 @@ static PyObject* test_reset(
 }
 
 static PyObject* test_weave_tls_1(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args)) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "test_weave_tls_1");
   PyObject* ret;
 
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
 
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p\n", _py_thread_id(), "test_weave_tls_1", tls_1);
   ret = PyLong_FromVoidPtr(tls_1);
 
   MUTEX_UNLOCK(destructor_mutex);
