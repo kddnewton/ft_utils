@@ -16,7 +16,6 @@ static weave_local void* tls_2 = NULL;
 static PyObject* test_reset(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "test_reset");
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
   destructor_called_1 = 0;
@@ -25,6 +24,7 @@ static PyObject* test_reset(
   tls_check_2 = 0;
   tls_1 = NULL;
   tls_2 = NULL;
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p\n", _py_thread_id(), "test_reset", tls_1, &tls_1);
   MUTEX_UNLOCK(destructor_mutex);
   Py_END_ALLOW_THREADS;
   Py_RETURN_NONE;
@@ -36,7 +36,7 @@ static PyObject* test_weave_tls_1(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
 
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p\n", _py_thread_id(), "test_weave_tls_1", tls_1);
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p\n", _py_thread_id(), "test_weave_tls_1", tls_1, &tls_1);
   ret = PyLong_FromVoidPtr(tls_1);
 
   MUTEX_UNLOCK(destructor_mutex);
