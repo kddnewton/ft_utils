@@ -10,7 +10,7 @@ static int destructor_called_2 = 0;
 static int tls_check_1 = 0;
 static int tls_check_2 = 0;
 
-static weave_local void* tls_1 = (void*) 0xDEADBEEF;
+static weave_local void* tls_1 = NULL;
 static weave_local void* tls_2 = NULL;
 
 static PyObject* test_reset(
