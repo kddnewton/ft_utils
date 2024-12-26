@@ -23,7 +23,7 @@ static PyObject* test_reset(
   destructor_called_2 = 0;
   tls_check_1 = 0;
   tls_check_2 = 0;
-  tls_1 = (void*) 0xDEADBEEF;
+  tls_1 = NULL; // (void*) 0xDEADBEEF;
   tls_2 = NULL;
   MUTEX_UNLOCK(destructor_mutex);
   Py_END_ALLOW_THREADS;
