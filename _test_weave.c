@@ -111,8 +111,10 @@ static PyObject* test_weave_register_destructor_1(
   fprintf(stderr, "[test_weave_register_destructor_1] tls_1=%p &tls_1=%p test_destructor_add_1=%p &test_destructor_add_1=%p\n", tls_1, arg1, test_destructor_add_1, arg2);
   int ret = _py_register_wvls_destructor(arg1, arg2);
   if (ret != 0) {
+    fprintf(stderr, "  ret != 0\n");
     return NULL;
   }
+  fprintf(stderr, "  tls_1=%p\n", tls_1);
   Py_RETURN_NONE;
 }
 
