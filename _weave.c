@@ -156,7 +156,7 @@ void wvls_destructors_invoke(void* arg) {
      destrutor registration order. */
   wvls_destructor_node_t* previous = NULL;
   while (node) {
-    fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p\n", (void*)node, node->wvls_variable_ptr);
+    fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", (void*)node, node->wvls_variable_ptr, (void*)*((void**)node->wvls_variable_ptr));
     wvls_destructor_node_t* next_node = node->next;
     node->next = previous;
     previous = node;

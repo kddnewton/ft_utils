@@ -15,6 +15,7 @@ static weave_local void* tls_2 = NULL;
 static PyObject* test_reset(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
+  fprintf(stderr, "[test_reset]\n");
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
   destructor_called_1 = 0;
