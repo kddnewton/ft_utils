@@ -164,6 +164,7 @@ void wvls_destructors_invoke(void* arg) {
   node = previous;
   while (node) {
     if (node->destructor && node->wvls_variable_ptr) {
+      fprintf(stderr, "[wvls_destructors_invoke] node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", node->wvls_variable_ptr, (void*)*((void**)node->wvls_variable_ptr));
       node->destructor(*(node->wvls_variable_ptr));
     }
     wvls_destructor_node_t* temp = node;
