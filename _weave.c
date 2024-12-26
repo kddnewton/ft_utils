@@ -190,7 +190,7 @@ static void init_wvls_destructor_key() {
 void register_wvls_destructor(
     void** wvls_variable_ptr,
     wvls_destructor_t destructor) {
-  fprintf(stderr, "[register_wvls_destructor] wvls_destructors_key=%lu\n", wvls_destructors_key);
+  fprintf(stderr, "[register_wvls_destructor] wvls_destructors_key=%lu wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", wvls_destructors_key, wvls_variable_ptr, *wvls_variable_ptr);
 
   wvls_destructor_node_t* head =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
@@ -213,6 +213,7 @@ void register_wvls_destructor(
 }
 
 int unregister_wvls_destructor(void** wvls_variable_ptr) {
+  fprintf(stderr, "[unregister_wvls_destructor] wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", wvls_variable_ptr, *wvls_variable_ptr);
   wvls_destructor_node_t* node =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
   wvls_destructor_node_t* previous = NULL;
