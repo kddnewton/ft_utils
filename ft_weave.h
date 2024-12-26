@@ -33,14 +33,14 @@ typedef pthread_key_t wvls_key_t;
    death. This function must not call into the Python interpreter in any way
    because we cannot guarantee any part of Python will be valid during the call.
  */
-typedef void (*wvls_destructor_t)(void*);
+typedef void (wvls_destructor_t)(void*);
 
 /* A platform independent way of creating a thead local storage key which can be
    used to access thread local storage and/or to register a destructor. Note
    that we can in general assume in Python that just marking a variable
    thread_local is good enough and we do not need these low level constructs
    other than to support destructors and other more complex concepts.*/
-int wvls_key_create(wvls_key_t* key, wvls_destructor_t destructor);
+int wvls_key_create(wvls_key_t* key, wvls_destructor_t *destructor);
 
 /* A platform independent way of deleting a tls key. */
 int wvls_key_delete(wvls_key_t key);
@@ -59,7 +59,7 @@ void* wvls_get_value(wvls_key_t key);
    callback will be honoured in the order they were added.*/
 void register_wvls_destructor(
     void** wvls_variable_ptr,
-    wvls_destructor_t destructor);
+    wvls_destructor_t *destructor);
 
 /* Remove all destructor callbacks for the given thread local storage position.
 Returns 1 if a destructor was found and 0 if not. */
@@ -114,7 +114,7 @@ static uint64_t _py_thread_id(void) {
 // NOLINTNEXTLINE
 static int _py_register_wvls_destructor(
     void** wvls_var,
-    wvls_destructor_t wvls_destructor) {
+    wvls_destructor_t *wvls_destructor) {
   PyObject* p_var = NULL;
   PyObject* p_destructor = NULL;
   PyObject* p_func = NULL;

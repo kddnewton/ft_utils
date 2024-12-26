@@ -22,7 +22,7 @@ void wvls_destructor_noop(void* Py_UNUSED(data)) {
   /* PASS */
 }
 
-int wvls_key_create(wvls_key_t* key, wvls_destructor_t destructor) {
+int wvls_key_create(wvls_key_t* key, wvls_destructor_t *destructor) {
   if (!key) {
     return ERROR_INVALID_PARAMETER;
   }
@@ -108,7 +108,7 @@ void* wvls_get_value(wvls_key_t key) {
 
 #else /* POSIX */
 
-int wvls_key_create(wvls_key_t* key, wvls_destructor_t destructor) {
+int wvls_key_create(wvls_key_t* key, wvls_destructor_t *destructor) {
   if (!key) {
     return EINVAL;
   }
@@ -143,7 +143,7 @@ void* wvls_get_value(wvls_key_t key) {
 
 typedef struct wvls_destructor_node {
   void** wvls_variable_ptr;
-  wvls_destructor_t destructor;
+  wvls_destructor_t *destructor;
   struct wvls_destructor_node* next;
 } wvls_destructor_node_t;
 
@@ -190,7 +190,7 @@ static void init_wvls_destructor_key() {
 
 void register_wvls_destructor(
     void** wvls_variable_ptr,
-    wvls_destructor_t destructor) {
+    wvls_destructor_t *destructor) {
   fprintf(stderr, "%-16" PRIu64 " [%-40s] *wvls_variable_ptr=%p\n", _py_thread_id(), "register_wvls_destructor", *wvls_variable_ptr);
 
   wvls_destructor_node_t* head =
@@ -266,7 +266,7 @@ static PyObject* wvlspy_register_destructor(PyObject* self, PyObject* args) {
   }
 
   fprintf(stderr, "%-16" PRIu64 " [%-40s] *var_ptr=%p\n", _py_thread_id(), "wvlspy_register_destructor", *((void**)var_ptr));
-  register_wvls_destructor(var_ptr, (wvls_destructor_t)destruct_ptr);
+  register_wvls_destructor(var_ptr, (wvls_destructor_t*)destruct_ptr);
 
   Py_RETURN_NONE;
 }
