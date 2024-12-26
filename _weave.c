@@ -150,14 +150,13 @@ typedef struct wvls_destructor_node {
 static wvls_key_t wvls_destructors_key;
 
 void wvls_destructors_invoke(void* arg) {
-  fprintf(stderr, "[wvls_destructors_invoke] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
+  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", __py_thread_id(), "wvls_destructors_invoke");
   wvls_destructor_node_t* node = (wvls_destructor_node_t*)arg;
 
   /* Reverse the linked list to ensure destructor calling order matched
      destrutor registration order. */
   wvls_destructor_node_t* previous = NULL;
   while (node) {
-    fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p destructor=%p\n", (void*)node, node->wvls_variable_ptr, *node->wvls_variable_ptr, (void*)node->destructor);
     wvls_destructor_node_t* next_node = node->next;
     node->next = previous;
     previous = node;
@@ -166,7 +165,7 @@ void wvls_destructors_invoke(void* arg) {
   node = previous;
   while (node) {
     if (node->destructor && node->wvls_variable_ptr) {
-      fprintf(stderr, "[wvls_destructors_invoke] node=%p node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p destructor=%p\n", (void*)node, node->wvls_variable_ptr, *node->wvls_variable_ptr, (void*)node->destructor);
+      fprintf(stderr, "%-16" PRIu64 " [%-40s] *node->wvls_variable_ptr=%p\n", __py_thread_id(), "wvls_destructors_invoke", *node->wvls_variable_ptr);
       node->destructor(*(node->wvls_variable_ptr));
     }
     wvls_destructor_node_t* temp = node;
@@ -176,7 +175,7 @@ void wvls_destructors_invoke(void* arg) {
 }
 
 static void init_wvls_destructor_key() {
-  fprintf(stderr, "[init_wvls_destructor_key]\n");
+  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", __py_thread_id(), "init_wvls_destructor_key");
   int oops = wvls_key_create(&wvls_destructors_key, wvls_destructors_invoke);
   if (oops) {
     fprintf(stderr, "Failed to create TLS key: %i.\n", oops);
@@ -193,8 +192,7 @@ static void init_wvls_destructor_key() {
 void register_wvls_destructor(
     void** wvls_variable_ptr,
     wvls_destructor_t destructor) {
-  fprintf(stderr, "[register_wvls_destructor] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
-  fprintf(stderr, "  wvls_destructors_key=%lu wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", wvls_destructors_key, wvls_variable_ptr, *wvls_variable_ptr);
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] *wvls_variable_ptr=%p\n", __py_thread_id(), "register_wvls_destructor", *wvls_variable_ptr);
 
   wvls_destructor_node_t* head =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
@@ -214,11 +212,10 @@ void register_wvls_destructor(
     fprintf(stderr, "Failed to set TLS value during insert.\n");
     abort();
   }
-  fprintf(stderr, "  wvls_destructors_key=%lu wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", wvls_destructors_key, wvls_variable_ptr, *wvls_variable_ptr);
 }
 
 int unregister_wvls_destructor(void** wvls_variable_ptr) {
-  fprintf(stderr, "[unregister_wvls_destructor] wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", wvls_variable_ptr, *wvls_variable_ptr);
+  abort();
   wvls_destructor_node_t* node =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
   wvls_destructor_node_t* previous = NULL;
@@ -269,16 +266,14 @@ static PyObject* wvlspy_register_destructor(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  fprintf(stderr, "[wvlspy_register_destructor] _py_thread_id()=%" PRIu64 "\n", _py_thread_id());
-  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)*((void**)destruct_ptr));
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] *var_ptr=%p\n", __py_thread_id(), "wvlspy_register_destructor", *var_ptr);
   register_wvls_destructor(var_ptr, (wvls_destructor_t)destruct_ptr);
-  fprintf(stderr, "  var_ptr=%p *var_ptr=%p destruct_ptr=%p *destruct_ptr=%p\n", var_ptr, (void*)*((void**)var_ptr), destruct_ptr, (void*)*((void**)destruct_ptr));
 
   Py_RETURN_NONE;
 }
 
 static PyObject* wvlspy_unregister_destructor(PyObject* self, PyObject* args) {
-  fprintf(stderr, "[wvlspy_unregister_destructor]\n");
+  abort();
   PyObject* wvls_var = NULL;
 
   /* Parse the arguments */
