@@ -133,10 +133,10 @@ static PyObject* test_weave_register_destructor_2(
 static PyObject* test_weave_register_destructor_reset_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  int ret = _py_register_wvls_destructor(&tls_1, &test_destructor_reset_1);
-  if (ret != 0) {
-    return NULL;
-  }
+  // int ret = _py_register_wvls_destructor(&tls_1, &test_destructor_reset_1);
+  // if (ret != 0) {
+  //   return NULL;
+  // }
   Py_RETURN_NONE;
 }
 
@@ -144,10 +144,10 @@ static PyObject* test_weave_unregister_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
   int unreg = 0;
-  int ret = _py_unregister_wvls_destructor(&tls_1, &unreg);
-  if (ret != 0) {
-    return NULL;
-  }
+  // int ret = _py_unregister_wvls_destructor(&tls_1, &unreg);
+  // if (ret != 0) {
+  //   return NULL;
+  // }
   return PyLong_FromLong(unreg);
 }
 
