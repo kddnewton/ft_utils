@@ -191,7 +191,7 @@ static void init_wvls_destructor_key() {
 void register_wvls_destructor(
     void** wvls_variable_ptr,
     wvls_destructor_t destructor) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] *wvls_variable_ptr=%p\n", _py_thread_id(), "register_wvls_destructor", *wvls_variable_ptr);
+  fprintf(stderr, "%-16" PRIu64 " [%-40s] wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", _py_thread_id(), "register_wvls_destructor", wvls_variable_ptr, *wvls_variable_ptr);
 
   wvls_destructor_node_t* head =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
