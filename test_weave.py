@@ -29,9 +29,11 @@ class TestTLSManagement(unittest.TestCase):
 
     def test_register_destructor_1(self):
         def thread_func():
+            print(f"IN CHILD! {threading.current_thread().native_id}")
             register_destructor_1()
             pass
 
+        print(f"IN PARENT! {threading.current_thread().native_id}")
         t = threading.Thread(target=thread_func)
         t.start()
         t.join()
