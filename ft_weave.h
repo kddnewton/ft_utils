@@ -99,14 +99,6 @@ static inline PyObject* _py_get_function(
   return pFunc;
 }
 
-static uint64_t _py_thread_id(void) {
-#ifdef _WIN32
-  return (uint64_t) GetCurrentThreadId();
-#else
-  return (uint64_t) pthread_self();
-#endif
-}
-
 /* A function to call from the C ABI which will use the Python interpretor to
    register a destructor. This allow the use of this header only in other
    modules and prevents inter-extension runtime communication other than through
@@ -121,7 +113,6 @@ static int _py_register_wvls_destructor(
   PyObject* p_args = NULL;
   PyObject* p_result = NULL;
 
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] wvls_var=%p\n", _py_thread_id(), "_py_register_wvls_destructor", wvls_var);
   _py_check_init_interpreter();
 
   int ret_val = 1;

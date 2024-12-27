@@ -23,7 +23,6 @@ static PyObject* test_reset(
   tls_check_2 = 0;
   tls_1 = NULL;
   tls_2 = NULL;
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p\n", _py_thread_id(), "test_reset", tls_1, &tls_1, tls_2, &tls_2);
   MUTEX_UNLOCK(destructor_mutex);
   Py_END_ALLOW_THREADS;
   Py_RETURN_NONE;
@@ -31,7 +30,6 @@ static PyObject* test_reset(
 
 static void test_destructor_add_1(void* addr) {
   MUTEX_LOCK(destructor_mutex);
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p addr=%p\n", _py_thread_id(), "test_destructor_add_1", tls_1, &tls_1, tls_2, &tls_2, addr);
   if (addr == tls_1) {
     destructor_called_1 += 1;
   } else {
@@ -66,7 +64,6 @@ static PyObject* test_weave_get_destructor_called_1(
   int c1;
   Py_BEGIN_ALLOW_THREADS;
   MUTEX_LOCK(destructor_mutex);
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p\n", _py_thread_id(), "test_weave_get_destructor_called_1", tls_1, &tls_1, tls_2, &tls_2);
   if (tls_check_1) {
     MUTEX_UNLOCK(destructor_mutex);
     Py_BLOCK_THREADS;
@@ -104,7 +101,6 @@ static PyObject* test_weave_get_destructor_called_2(
 static PyObject* test_weave_register_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p\n", _py_thread_id(), "test_weave_register_destructor_1", tls_1, &tls_1, tls_2, &tls_2);
   int ret = _py_register_wvls_destructor(&tls_1, &test_destructor_add_1);
   if (ret != 0) {
     return NULL;

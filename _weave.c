@@ -164,7 +164,6 @@ void wvls_destructors_invoke(void* arg) {
   node = previous;
   while (node) {
     if (node->destructor && node->wvls_variable_ptr) {
-      fprintf(stderr, "%-16" PRIu64 " [%-40s] node->wvls_variable_ptr=%p *node->wvls_variable_ptr=%p\n", _py_thread_id(), "wvls_destructors_invoke", node->wvls_variable_ptr, *node->wvls_variable_ptr);
       node->destructor(*(node->wvls_variable_ptr));
     }
     wvls_destructor_node_t* temp = node;
@@ -177,13 +176,11 @@ static void init_wvls_destructor_key() {
   fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "init_wvls_destructor_key");
   int oops = wvls_key_create(&wvls_destructors_key, wvls_destructors_invoke);
   if (oops) {
-    fprintf(stderr, "Failed to create TLS key: %i.\n", oops);
     abort();
   }
   /* Probably not necessary but let's be careful. */
   oops = wvls_set_value(wvls_destructors_key, NULL);
   if (oops) {
-    fprintf(stderr, "Failed to set TLS value : %i.\n", oops);
     abort();
   }
 }
@@ -191,8 +188,6 @@ static void init_wvls_destructor_key() {
 void register_wvls_destructor(
     void** wvls_variable_ptr,
     wvls_destructor_t destructor) {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] wvls_variable_ptr=%p *wvls_variable_ptr=%p\n", _py_thread_id(), "register_wvls_destructor", wvls_variable_ptr, *wvls_variable_ptr);
-
   wvls_destructor_node_t* head =
       (wvls_destructor_node_t*)wvls_get_value(wvls_destructors_key);
 
