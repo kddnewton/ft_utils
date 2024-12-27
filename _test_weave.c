@@ -30,21 +30,6 @@ static PyObject* test_reset(
   Py_RETURN_NONE;
 }
 
-static PyObject* test_weave_tls_1(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args)) {
-  PyObject* ret;
-
-  Py_BEGIN_ALLOW_THREADS;
-  MUTEX_LOCK(destructor_mutex);
-
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p\n", _py_thread_id(), "test_weave_tls_1", tls_1, &tls_1, tls_2, &tls_2);
-  ret = PyLong_FromVoidPtr(tls_1);
-
-  MUTEX_UNLOCK(destructor_mutex);
-  Py_END_ALLOW_THREADS;
-
-  return ret;
-}
-
 static void test_destructor_add_1(void* addr) {
   MUTEX_LOCK(destructor_mutex);
   fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p addr=%p\n", _py_thread_id(), "test_destructor_add_1", tls_1, &tls_1, tls_2, &tls_2, addr);
@@ -121,8 +106,7 @@ static PyObject* test_weave_register_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
   fprintf(stderr, "%-16" PRIu64 " [%-40s] tls_1=%p &tls_1=%p tls_2=%p &tls_2=%p\n", _py_thread_id(), "test_weave_register_destructor_1", tls_1, &tls_1, tls_2, &tls_2);
-  void *alloc = malloc(16);
-  int ret = _py_register_wvls_destructor(&alloc, &test_destructor_add_1);
+  int ret = _py_register_wvls_destructor(&tls_1, &test_destructor_add_1);
   if (ret != 0) {
     return NULL;
   }
@@ -173,7 +157,6 @@ static PyObject* test_weave_unregister_destructor_2(
 
 static PyMethodDef test_weave_module_methods[] = {
     {"reset", test_reset, METH_VARARGS, "Reset the destructor test values."},
-    {"tls_1", test_weave_tls_1, METH_NOARGS, "Get the value of tls_1"},
     {"register_destructor_1",
      test_weave_register_destructor_1,
      METH_NOARGS,
