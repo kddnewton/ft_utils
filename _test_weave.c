@@ -12,11 +12,27 @@ static int tls_check_2 = 0;
 static weave_local void* tls_1 = NULL;
 static weave_local void* tls_2 = NULL;
 
-static int sentinel_1 = 0xDEADBEEF;
+static int sentinel_1 = 0x12345678;
 static void* sentinel_ptr_1 = &sentinel_1;
 
-static int sentinel_2 = 0xCAFED00D;
+static int sentinel_2 = 0x87654321;
 static void* sentinel_ptr_2 = &sentinel_2;
+
+static void tls_1_write(void *value) {
+  fprintf(
+    stderr,
+    "thread %lu changing tls_1 at %p from %p to %p\n",
+#ifdef _WIN32
+    (unsigned long) GetCurrentThreadId(),
+#else
+    (unsigned long) pthread_self(),
+#endif
+    &tls_1,
+    tls_1,
+    value
+  );
+  tls_1 = value;
+}
 
 static PyObject* test_reset(
     PyObject* Py_UNUSED(self),
@@ -27,10 +43,7 @@ static PyObject* test_reset(
   destructor_called_2 = 0;
   tls_check_1 = 0;
   tls_check_2 = 0;
-#ifndef _WIN32
-  fprintf(stderr, "%lu SETTING tls_1 AT %p TO NULL\n", (unsigned long) pthread_self(), &tls_1);
-#endif
-  tls_1 = NULL;
+  tls_1_write(NULL);
   tls_2 = NULL;
   MUTEX_UNLOCK(destructor_mutex);
   Py_END_ALLOW_THREADS;
@@ -114,10 +127,7 @@ static PyObject* test_weave_get_destructor_called_2(
 static PyObject* test_weave_register_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* arg) {
-  tls_1 = sentinel_ptr_1;
-#ifndef _WIN32
-  fprintf(stderr, "%lu SETTING tls_1 AT %p TO %p\n", (unsigned long) pthread_self(), &tls_1, sentinel_ptr_1);
-#endif
+  tls_1_write(sentinel_ptr_1);
 
   int ret =
       _py_register_wvls_destructor(&sentinel_ptr_1, &test_destructor_add_1);
@@ -146,10 +156,7 @@ static PyObject* test_weave_register_destructor_2(
 static PyObject* test_weave_register_destructor_reset_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  tls_1 = sentinel_ptr_1;
-#ifndef _WIN32
-  fprintf(stderr, "%lu SETTING tls_1 AT %p TO %p\n", (unsigned long) pthread_self(), &tls_1, sentinel_ptr_1);
-#endif
+  tls_1_write(sentinel_ptr_1);
 
   int ret =
       _py_register_wvls_destructor(&sentinel_ptr_1, &test_destructor_reset_1);
@@ -164,10 +171,7 @@ static PyObject* test_weave_register_destructor_reset_1(
 static PyObject* test_weave_unregister_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  tls_1 = NULL;
-#ifndef _WIN32
-  fprintf(stderr, "%lu SETTING tls_1 AT %p TO NULL\n", (unsigned long) pthread_self(), &tls_1);
-#endif
+  tls_1_write(NULL);
 
   int unreg = 0;
   int ret = _py_unregister_wvls_destructor(&sentinel_ptr_1, &unreg);
