@@ -9,7 +9,7 @@ static int destructor_called_1 = 0;
 static int destructor_called_2 = 0;
 static int tls_check_1 = 0;
 static int tls_check_2 = 0;
-static weave_local void* tls_1 = NULL;
+static weave_local void* tls_1 = &tls_check_1;
 static weave_local void* tls_2 = NULL;
 
 static int sentinel_1 = 0x12345678;
