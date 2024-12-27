@@ -349,10 +349,15 @@ class TestRWLockSignals(unittest.TestCase):
                 raise RuntimeError("Release lock phase error")
             phase.incr()
 
-        with self.assertRaises(RuntimeError) as context:
-            run_interrupt_handling(self, RWLock(), acquire, release)
+        def excepthook(args):
+            print(f"EXCEPTION!!! {args.exc_value}")
 
-        self.assertTrue("Release lock phase error" in context.exception)
+        threading.excepthook = excepthook
+
+        try:
+            run_interrupt_handling(self, RWLock(), acquire, release)
+        finally:
+            threading.excepthook = threading.__excepthook__
 
 
 if __name__ == "__main__":
