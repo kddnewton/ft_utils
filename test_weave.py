@@ -18,7 +18,6 @@ from ft_utils._test_weave import (  # @manual
     reset,
     unregister_destructor_1,
     unregister_destructor_2,
-    tls_1,
 )
 
 
