@@ -43,7 +43,7 @@ static void test_destructor_add_1(void* addr) {
     destructor_called_1 += 1;
   } else {
 #ifndef _WIN32
-    fprintf(stderr, "%lu FAILED addr=%p addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", (unsigned long) pthread_self(), addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
+    fprintf(stderr, "%lu FAILED addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", (unsigned long) pthread_self(), addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
 #endif
 
     tls_check_1 = 1;
