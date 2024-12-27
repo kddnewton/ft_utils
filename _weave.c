@@ -173,14 +173,15 @@ void wvls_destructors_invoke(void* arg) {
 }
 
 static void init_wvls_destructor_key() {
-  fprintf(stderr, "%-16" PRIu64 " [%-40s]\n", _py_thread_id(), "init_wvls_destructor_key");
   int oops = wvls_key_create(&wvls_destructors_key, wvls_destructors_invoke);
   if (oops) {
+    fprintf(stderr, "Failed to create TLS key: %i.\n", oops);
     abort();
   }
   /* Probably not necessary but let's be careful. */
   oops = wvls_set_value(wvls_destructors_key, NULL);
   if (oops) {
+    fprintf(stderr, "Failed to set TLS value : %i.\n", oops);
     abort();
   }
 }
@@ -259,7 +260,6 @@ static PyObject* wvlspy_register_destructor(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  fprintf(stderr, "%-16" PRIu64 " [%-40s] *var_ptr=%p\n", _py_thread_id(), "wvlspy_register_destructor", *((void**)var_ptr));
   register_wvls_destructor(var_ptr, (wvls_destructor_t)destruct_ptr);
 
   Py_RETURN_NONE;
