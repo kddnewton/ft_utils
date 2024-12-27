@@ -39,7 +39,7 @@ static void test_destructor_add_1(void* addr) {
   if (addr == tls_1) {
     destructor_called_1 += 1;
   } else {
-    fprintf(stderr, "FAILED! addr=%p tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", addr, tls_1, sentinel_ptr_1, &sentinel_ptr_1);
+    fprintf(stderr, "FAILED! addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
     tls_check_1 = 1;
   }
   MUTEX_UNLOCK(destructor_mutex);
@@ -116,6 +116,7 @@ static PyObject* test_weave_register_destructor_1(
   }
 
   tls_1 = sentinel_ptr_1;
+  fprintf(stderr, "SETTING tls_1 AT %p TO %p\n", &tls_1, sentinel_ptr_1);
   Py_RETURN_NONE;
 }
 
