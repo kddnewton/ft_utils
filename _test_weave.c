@@ -27,7 +27,9 @@ static PyObject* test_reset(
   destructor_called_2 = 0;
   tls_check_1 = 0;
   tls_check_2 = 0;
-  fprintf(stderr, "SETTING tls_1 AT %p to NULL\n", &tls_1);
+#ifndef _WIN32
+  fprintf(stderr, "%lu SETTING tls_1 AT %p TO NULL\n", (unsigned long) pthread_self(), &tls_1);
+#endif
   tls_1 = NULL;
   tls_2 = NULL;
   MUTEX_UNLOCK(destructor_mutex);
@@ -40,7 +42,10 @@ static void test_destructor_add_1(void* addr) {
   if (addr == tls_1) {
     destructor_called_1 += 1;
   } else {
-    fprintf(stderr, "FAILED! addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
+#ifndef _WIN32
+    fprintf(stderr, "%lu FAILED addr=%p addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", (unsigned long) pthread_self(), addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
+#endif
+
     tls_check_1 = 1;
   }
   MUTEX_UNLOCK(destructor_mutex);
@@ -117,7 +122,9 @@ static PyObject* test_weave_register_destructor_1(
   }
 
   tls_1 = sentinel_ptr_1;
-  fprintf(stderr, "SETTING tls_1 AT %p TO %p\n", &tls_1, sentinel_ptr_1);
+#ifndef _WIN32
+  fprintf(stderr, "%lu SETTING tls_1 AT %p TO %p\n", (unsigned long) pthread_self(), &tls_1, sentinel_ptr_1);
+#endif
   Py_RETURN_NONE;
 }
 
@@ -146,7 +153,9 @@ static PyObject* test_weave_register_destructor_reset_1(
   }
 
   tls_1 = sentinel_ptr_1;
-  fprintf(stderr, "SETTING tls_1 AT %p TO %p\n", &tls_1, sentinel_ptr_1);
+#ifndef _WIN32
+  fprintf(stderr, "%lu SETTING tls_1 AT %p TO %p\n", (unsigned long) pthread_self(), &tls_1, sentinel_ptr_1);
+#endif
   Py_RETURN_NONE;
 }
 
@@ -160,7 +169,9 @@ static PyObject* test_weave_unregister_destructor_1(
   }
 
   tls_1 = NULL;
-  fprintf(stderr, "SETTING tls_1 AT %p TO NULL\n", &tls_1);
+#ifndef _WIN32
+  fprintf(stderr, "%lu SETTING tls_1 AT %p TO NULL\n", (unsigned long) pthread_self(), &tls_1);
+#endif
   return PyLong_FromLong(unreg);
 }
 
