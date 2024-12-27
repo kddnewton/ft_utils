@@ -349,6 +349,13 @@ class TestRWLockSignals(unittest.TestCase):
                 raise RuntimeError("Release lock phase error")
             phase.incr()
 
+        def excepthook(args):
+            if (
+                args.exc_type != RuntimeError
+                or str(args.exc_value) != "Release lock phase error"
+            ):
+                raise RuntimeError("Unexpected exception occurred")
+
         previous = threading.excepthook
         threading.excepthook = excepthook
 
