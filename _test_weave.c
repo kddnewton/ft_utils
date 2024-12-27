@@ -13,10 +13,10 @@ static weave_local void* tls_1 = NULL;
 static weave_local void* tls_2 = NULL;
 
 static int sentinel_1 = 0x12345678;
-static void* sentinel_ptr_1 = &sentinel_1;
+static void* sentinel_1_ptr = &sentinel_1;
 
 static int sentinel_2 = 0x87654321;
-static void* sentinel_ptr_2 = &sentinel_2;
+static void* sentinel_2_ptr = &sentinel_2;
 
 static void tls_1_write(void *value) {
   fprintf(
@@ -51,14 +51,23 @@ static PyObject* test_reset(
 }
 
 static void test_destructor_add_1(void* addr) {
+  fprintf(
+    stderr,
+    "thread %lu looking at tls_1 at %p with value %p compared to %p\n",
+#ifdef _WIN32
+    (unsigned long) GetCurrentThreadId(),
+#else
+    (unsigned long) pthread_self(),
+#endif
+    &tls_1,
+    tls_1,
+    addr
+  );
+
   MUTEX_LOCK(destructor_mutex);
   if (addr == tls_1) {
     destructor_called_1 += 1;
   } else {
-#ifndef _WIN32
-    fprintf(stderr, "%lu FAILED addr=%p tls_1=%p &tls_1=%p sentinel_ptr_1=%p &sentinel_ptr_1=%p\n", (unsigned long) pthread_self(), addr, tls_1, &tls_1, sentinel_ptr_1, &sentinel_ptr_1);
-#endif
-
     tls_check_1 = 1;
   }
   MUTEX_UNLOCK(destructor_mutex);
@@ -127,10 +136,10 @@ static PyObject* test_weave_get_destructor_called_2(
 static PyObject* test_weave_register_destructor_1(
     PyObject* Py_UNUSED(self),
     PyObject* arg) {
-  tls_1_write(sentinel_ptr_1);
+  tls_1_write(sentinel_1_ptr);
 
   int ret =
-      _py_register_wvls_destructor(&sentinel_ptr_1, &test_destructor_add_1);
+      _py_register_wvls_destructor(&sentinel_1_ptr, &test_destructor_add_1);
 
   if (ret != 0) {
     return NULL;
@@ -143,23 +152,23 @@ static PyObject* test_weave_register_destructor_2(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
   int ret =
-      _py_register_wvls_destructor(&sentinel_ptr_2, &test_destructor_add_2);
+      _py_register_wvls_destructor(&sentinel_2_ptr, &test_destructor_add_2);
 
   if (ret != 0) {
     return NULL;
   }
 
-  tls_2 = sentinel_ptr_2;
+  tls_2 = sentinel_2_ptr;
   Py_RETURN_NONE;
 }
 
 static PyObject* test_weave_register_destructor_reset_1(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
-  tls_1_write(sentinel_ptr_1);
+  tls_1_write(sentinel_1_ptr);
 
   int ret =
-      _py_register_wvls_destructor(&sentinel_ptr_1, &test_destructor_reset_1);
+      _py_register_wvls_destructor(&sentinel_1_ptr, &test_destructor_reset_1);
 
   if (ret != 0) {
     return NULL;
@@ -174,7 +183,7 @@ static PyObject* test_weave_unregister_destructor_1(
   tls_1_write(NULL);
 
   int unreg = 0;
-  int ret = _py_unregister_wvls_destructor(&sentinel_ptr_1, &unreg);
+  int ret = _py_unregister_wvls_destructor(&sentinel_1_ptr, &unreg);
   if (ret != 0) {
     return NULL;
   }
@@ -186,7 +195,7 @@ static PyObject* test_weave_unregister_destructor_2(
     PyObject* Py_UNUSED(self),
     PyObject* Py_UNUSED(args)) {
   int unreg = 0;
-  int ret = _py_unregister_wvls_destructor(&sentinel_ptr_2, &unreg);
+  int ret = _py_unregister_wvls_destructor(&sentinel_2_ptr, &unreg);
   if (ret != 0) {
     return NULL;
   }
