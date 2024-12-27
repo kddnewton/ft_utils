@@ -101,7 +101,9 @@ static inline PyObject* _py_get_function(
 
 static uint64_t _py_thread_id(void) {
 #ifdef _WIN32
-  return 0;
+  LPVOID data;
+  GetFiberData(&data);
+  return (uint64_t) data;
 #else
   return (uint64_t) pthread_self();
 #endif
